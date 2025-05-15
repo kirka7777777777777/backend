@@ -16,6 +16,7 @@ class User extends Model
         'password'
     ];
 
+
     protected static function booted()
     {
         static::created(function ($user) {
