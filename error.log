@@ -1,0 +1,1 @@
+[Wed May 14 19:45:10.009199 2025] [php:error] [pid 55540] [client 10.30.8.126:40170] PHP Fatal error:  Cannot redeclare Controller\\Site::index() in /srv/users/jfvntdac/uafxitf-m6/app/Controller/Site.php on line 21
