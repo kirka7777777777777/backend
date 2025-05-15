@@ -1,12 +1,11 @@
 {
     "name": "kirka7777777777777/backend",
+    "description": "practice",
     "type": "project",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^7.4 | ^8.0",
-        "illuminate/database": "10.x-dev",
-        "illuminate/events": "10.x-dev"
+        "php": "^7.4 | ^8.0"
 
     },
     "autoload": {
