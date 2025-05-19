@@ -1,8 +1,0 @@
-10.30.8.126 - - [12/May/2025:18:50:28 -0700] "GET / HTTP/1.1" 200 556 "http://wsr.ru/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-10.30.8.126 - - [12/May/2025:18:50:28 -0700] "GET /favicon.ico HTTP/1.1" 200 555 "http://uafxitf-m6.wsr.ru/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-10.30.8.126 - - [12/May/2025:19:21:36 -0700] "GET / HTTP/1.1" 200 556 "http://wsr.ru/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-10.30.8.126 - - [12/May/2025:19:21:36 -0700] "GET /favicon.ico HTTP/1.1" 200 555 "http://uafxitf-m6.wsr.ru/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-10.30.8.126 - - [12/May/2025:19:21:40 -0700] "GET /hello HTTP/1.1" 200 216 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-10.30.8.126 - - [12/May/2025:19:21:40 -0700] "GET /favicon.ico HTTP/1.1" 200 555 "http://uafxitf-m6.wsr.ru/hello" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-10.30.8.126 - - [12/May/2025:19:21:44 -0700] "GET /go HTTP/1.1" 200 216 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-10.30.8.126 - - [12/May/2025:19:21:44 -0700] "GET /favicon.ico HTTP/1.1" 200 555 "http://uafxitf-m6.wsr.ru/go" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
