@@ -4,7 +4,7 @@ namespace Middlewares;
 
 use Src\Request;
 
-class TrimMiddleware
+class   TrimMiddleware
 {
     public function handle(Request $request)
     {
