@@ -15,7 +15,8 @@ class User extends Model implements IdentityInterface
         'name',
         'login',
         'password',
-        'avatar'
+        'avatar',
+        'role'
     ];
 
     protected static function booted()
@@ -43,5 +44,15 @@ class User extends Model implements IdentityInterface
     {
         return self::where(['login' => $credentials['login'],
             'password' => md5($credentials['password'])])->first();
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isEmployee(): bool
+    {
+        return $this->role === 'employee';
     }
 }

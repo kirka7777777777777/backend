@@ -20,6 +20,26 @@ $basePath = app()->settings->getRootPath();
     <p>No avatar uploaded yet.</p>
 <?php endif; ?>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <a href="<?= $basePath ?>/logout">logout </a>
 </body>
 </html>
