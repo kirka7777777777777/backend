@@ -18,7 +18,6 @@ class BuildingController
 
     public function addBuilding(Request $request): string
     {
-
         if (!app()->auth::check() || (!app()->auth::user()->isEmployee() && !app()->auth::user()->isAdmin())) {
             app()->route->redirect('/login');
             return '';

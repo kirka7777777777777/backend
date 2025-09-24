@@ -21,7 +21,7 @@ class RoomController
 
     public function addRoom(Request $request): string
     {
-
+        // Доступ только для сотрудников и администраторов
         if (!app()->auth::check() || (!app()->auth::user()->isEmployee() && !app()->auth::user()->isAdmin())) {
             app()->route->redirect('/login');
             return '';
