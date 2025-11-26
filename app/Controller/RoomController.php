@@ -10,6 +10,12 @@ use Src\Validator\Validator;
 
 class RoomController
 {
+    public function index(Request $request): string
+    {
+        app()->route->redirect('/rooms');
+        return '';
+    }
+
     public function rooms(Request $request): string
     {
         $buildingId = $request->get('building_id');

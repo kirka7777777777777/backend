@@ -11,7 +11,8 @@ class Building extends Model
     public $timestamps = false;
     protected $fillable = [
         'name',
-        'address'
+        'address',
+        'room_count'
     ];
 
     public function rooms()
