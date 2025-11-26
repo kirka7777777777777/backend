@@ -10,12 +10,14 @@ class View
     private array $data = [];
     private string $root = '';
     private string $layout = '/layouts/main.php';
+    private $path;
 
     public function __construct(string $view = '', array $data = [])
     {
         $this->root = $this->getRoot();
         $this->view = $view;
         $this->data = $data;
+        $this->path = $view;
     }
 
     //Полный путь до директории с представлениями
@@ -64,7 +66,11 @@ class View
 
     public function __toString(): string
     {
-        return $this->render($this->view, $this->data);
+        try {
+            return $this->render($this->path, $this->data);
+        } catch (\Exception $e) {
+            return "Error rendering view: " . $e->getMessage();
+        }
     }
 
 }

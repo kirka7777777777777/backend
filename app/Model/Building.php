@@ -19,4 +19,9 @@ class Building extends Model
     {
         return $this->hasMany(Room::class, 'building_id');
     }
+    public function updateRoomCount()
+    {
+        $this->room_count = $this->rooms()->count();
+        $this->save();
+    }
 }

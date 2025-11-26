@@ -22,12 +22,26 @@ class RoomController
         $rooms = $buildingId ? Room::where('building_id', $buildingId)->get() : Room::all();
 
         $buildings = Building::all();
-        return new View('rooms.index', ['rooms' => $rooms, 'buildings' => $buildings]);
+
+        // Статистика для карточек
+        $totalRooms = Room::count();
+        $totalAuditoriums = Room::whereHas('type', function($query) {
+            $query->where('name', 'like', '%аудитория%');
+        })->count();
+        $totalSeats = Room::sum('seats');
+
+        $view = new View('rooms.index', [
+            'rooms' => $rooms,
+            'buildings' => $buildings,
+            'totalRooms' => $totalRooms,
+            'totalAuditoriums' => $totalAuditoriums,
+            'totalSeats' => $totalSeats
+        ]);
+        return (string)$view;
     }
 
     public function addRoom(Request $request): string
     {
-        // Доступ только для сотрудников и администраторов
         if (!app()->auth::check() || (!app()->auth::user()->isEmployee() && !app()->auth::user()->isAdmin())) {
             app()->route->redirect('/login');
             return '';
@@ -41,27 +55,157 @@ class RoomController
                 'name' => ['required'],
                 'building_id' => ['required'],
                 'type_id' => ['required'],
-                'area' => ['required', 'numeric'],
-                'seats' => ['required', 'numeric']
+                'area' => ['required'],
+                'seats' => ['required']
             ], [
-                'required' => 'Поле :field пусто',
-                'numeric' => 'Поле :field должно быть числом'
+                'required' => 'Поле :field пусто'
             ]);
 
-            if ($validator->fails()) {
-                return new View('rooms.add', [
-                    'message' => json_encode($validator->errors(), JSON_UNESCAPED_UNICODE),
+            $additionalErrors = [];
+
+            if (!is_numeric($request->get('area'))) {
+                $additionalErrors['area'][] = 'Поле площадь должно быть числом';
+            }
+
+            if (!is_numeric($request->get('seats'))) {
+                $additionalErrors['seats'][] = 'Поле посадочные места должно быть числом';
+            }
+
+            if ($validator->fails() || !empty($additionalErrors)) {
+                $allErrors = array_merge($validator->errors(), $additionalErrors);
+                $view = new View('rooms.add', [
+                    'message' => json_encode($allErrors, JSON_UNESCAPED_UNICODE),
                     'buildings' => $buildings,
                     'types' => $types
                 ]);
+                return (string)$view;
             }
 
             if (Room::create($request->all())) {
+                $buildingId = $request->get('building_id');
+                $building = Building::find($buildingId);
+                if ($building) {
+                    $building->updateRoomCount();
+                }
+
                 app()->route->redirect('/rooms');
                 return '';
             }
         }
-        return new View('rooms.add', ['buildings' => $buildings, 'types' => $types]);
+
+        $view = new View('rooms.add', ['buildings' => $buildings, 'types' => $types]);
+        return (string)$view;
+    }
+
+    public function editRoom($id = null, Request $request = null): string
+    {
+        // Если $request не передан, создаем его
+        if ($request === null) {
+            $request = app()->request;
+        }
+
+        if (!app()->auth::check() || (!app()->auth::user()->isEmployee() && !app()->auth::user()->isAdmin())) {
+            app()->route->redirect('/login');
+            return '';
+        }
+
+        // Получаем ID помещения из параметра маршрута
+        $roomId = $id;
+        $room = Room::find($roomId);
+
+        $buildings = Building::all();
+        $types = RoomType::all();
+
+        if ($request->method === 'POST') {
+            $validator = new Validator($request->all(), [
+                'name' => ['required'],
+                'building_id' => ['required'],
+                'type_id' => ['required'],
+                'area' => ['required'],
+                'seats' => ['required']
+            ], [
+                'required' => 'Поле :field пусто'
+            ]);
+
+            // Дополнительная проверка на числовые значения
+            $additionalErrors = [];
+
+            if (!is_numeric($request->get('area'))) {
+                $additionalErrors['area'][] = 'Поле площадь должно быть числом';
+            }
+
+            if (!is_numeric($request->get('seats'))) {
+                $additionalErrors['seats'][] = 'Поле посадочные места должно быть числом';
+            }
+
+            // Объединяем ошибки
+            if ($validator->fails() || !empty($additionalErrors)) {
+                $allErrors = array_merge($validator->errors(), $additionalErrors);
+                $view = new View('rooms.edit', [
+                    'message' => json_encode($allErrors, JSON_UNESCAPED_UNICODE),
+                    'room' => $room,
+                    'buildings' => $buildings,
+                    'types' => $types
+                ]);
+                return (string)$view;
+            }
+
+            if ($room) {
+                $oldBuildingId = $room->building_id;
+                $newBuildingId = $request->get('building_id');
+                $room->update($request->all());
+
+                if ($oldBuildingId != $newBuildingId) {
+                    $oldBuilding = Building::find($oldBuildingId);
+                    if ($oldBuilding) {
+                        $oldBuilding->updateRoomCount();
+                    }
+                }
+
+                $newBuilding = Building::find($newBuildingId);
+                if ($newBuilding) {
+                    $newBuilding->updateRoomCount();
+                }
+
+                app()->route->redirect('/rooms');
+                return '';
+            }
+        }
+
+        $view = new View('rooms.edit', [
+            'room' => $room,
+            'buildings' => $buildings,
+            'types' => $types
+        ]);
+        return (string)$view;
+    }
+
+    public function deleteRoom($id = null, Request $request = null): string
+    {
+        if ($request === null) {
+            $request = app()->request;
+        }
+
+        if (!app()->auth::check() || (!app()->auth::user()->isEmployee() && !app()->auth::user()->isAdmin())) {
+            app()->route->redirect('/login');
+            return '';
+        }
+
+        $roomId = $id;
+        $room = Room::find($roomId);
+
+        if ($room) {
+            $buildingId = $room->building_id;
+            $room->delete();
+
+            $building = Building::find($buildingId);
+            if ($building) {
+                $building->updateRoomCount();
+            }
+        }
+
+        app()->route->redirect('/rooms');
+        return '';
     }
 
     public function stats(Request $request): string
@@ -80,10 +224,12 @@ class RoomController
         }
 
         $buildings = Building::all();
-        return new View('rooms.stats', [
+
+        $view = new View('rooms.stats', [
             'stats' => $stats,
             'buildings' => $buildings,
             'selectedBuilding' => $building
         ]);
+        return (string)$view;
     }
 }

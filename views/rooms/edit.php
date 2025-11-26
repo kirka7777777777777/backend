@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Добавить здание - Система управления помещениями</title>
+    <title>Редактировать помещение - Система управления помещениями</title>
     <style>
         * {
             margin: 0;
@@ -125,7 +125,7 @@
             font-size: 0.9rem;
         }
 
-        .form-input {
+        .form-input, .form-select {
             width: 100%;
             padding: 1rem 1.25rem;
             border: 2px solid #e8ecef;
@@ -135,7 +135,7 @@
             background: #fafbfc;
         }
 
-        .form-input:focus {
+        .form-input:focus, .form-select:focus {
             outline: none;
             border-color: #667eea;
             background: white;
@@ -198,6 +198,20 @@
             margin: 0.25rem 0;
         }
 
+        .room-info {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .room-info p {
+            color: #0369a1;
+            font-size: 0.9rem;
+            margin: 0.25rem 0;
+        }
+
         /* Footer */
         .footer {
             background: rgba(0, 0, 0, 0.1);
@@ -225,14 +239,11 @@
     </style>
 </head>
 <body>
-
-
-<!-- Main Content -->
 <main class="main-content">
     <div class="form-container">
         <div class="form-header">
-            <h1>🏗️ Добавить здание</h1>
-            <p>Заполните информацию о новом здании</p>
+            <h1>✏️ Редактировать помещение</h1>
+            <p>Обновите информацию о помещении</p>
         </div>
 
         <div class="form-body">
@@ -253,36 +264,79 @@
                 </div>
             <?php endif; ?>
 
-            <form method="post">
-                <!-- Добавьте CSRF токен -->
-                <input type="hidden" name="csrf_token" value="<?= app()->auth::generateCSRF() ?>">
-
-                <div class="form-group">
-                    <label class="form-label">🏛️ Название здания</label>
-                    <input type="text" name="name" class="form-input" required
-                           placeholder="Введите название здания"
-                           value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
+            <?php if (isset($room) && $room): ?>
+                <div class="room-info">
+                    <p><strong>ID помещения:</strong> #<?= $room->id ?></p>
+                    <p><strong>Здание:</strong> <?= htmlspecialchars($room->building->name ?? 'Не указано') ?></p>
+                    <p><strong>Тип:</strong> <?= htmlspecialchars($room->type->name ?? 'Не указан') ?></p>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">📍 Адрес</label>
-                    <input type="text" name="address" class="form-input" required
-                           placeholder="Введите адрес здания"
-                           value="<?= htmlspecialchars($_POST['address'] ?? '') ?>">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">🚪 Количество помещений</label>
-                    <input type="number" name="room_count" class="form-input" required
-                           placeholder="Введите количество помещений"
-                           value="<?= htmlspecialchars($_POST['room_count'] ?? '') ?>"
-                           min="1">
-                </div>
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="<?= app()->auth::generateCSRF() ?>">
 
-                <button type="submit" class="btn btn-primary">
-                    ✅ Добавить здание
-                </button>
+                    <div class="form-group">
+                        <label class="form-label">🏷️ Название помещения</label>
+                        <input type="text" name="name" class="form-input" required
+                               placeholder="Введите название помещения"
+                               value="<?= htmlspecialchars($room->name) ?>">
+                    </div>
 
-            </form>
+                    <div class="form-group">
+                        <label class="form-label">🏢 Здание</label>
+                        <select name="building_id" class="form-select" required>
+                            <option value="">Выберите здание</option>
+                            <?php foreach ($buildings as $building): ?>
+                                <option value="<?= $building->id ?>" <?= $room->building_id == $building->id ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($building->name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">📝 Тип помещения</label>
+                        <select name="type_id" class="form-select" required>
+                            <option value="">Выберите тип помещения</option>
+                            <?php foreach ($types as $type): ?>
+                                <option value="<?= $type->id ?>" <?= $room->type_id == $type->id ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($type->name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">📐 Площадь (м²)</label>
+                        <input type="number" name="area" class="form-input" required
+                               placeholder="Введите площадь помещения"
+                               value="<?= htmlspecialchars($room->area) ?>"
+                               step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">💺 Посадочных мест</label>
+                        <input type="number" name="seats" class="form-input" required
+                               placeholder="Введите количество посадочных мест"
+                               value="<?= htmlspecialchars($room->seats) ?>"
+                               min="0">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        💾 Сохранить изменения
+                    </button>
+
+                    <a href="<?= app()->route->getUrl('/rooms') ?>" class="btn btn-secondary">
+                        ↩️ Отмена
+                    </a>
+                </form>
+            <?php else: ?>
+                <div class="error-message">
+                    <p>❌ Помещение не найдено</p>
+                </div>
+                <a href="<?= app()->route->getUrl('/rooms') ?>" class="btn btn-primary">
+                    📋 Вернуться к списку помещений
+                </a>
+            <?php endif; ?>
         </div>
     </div>
 </main>

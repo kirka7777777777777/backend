@@ -287,7 +287,6 @@
                 <li><a href="<?= app()->route->getUrl('/') ?>">Главная</a></li>
                 <li><a href="<?= app()->route->getUrl('/buildings') ?>">Здания</a></li>
                 <li><a href="<?= app()->route->getUrl('/rooms') ?>">Помещения</a></li>
-                <li><a href="<?= app()->route->getUrl('/reports') ?>">Отчеты</a></li>
                 <?php if (app()->auth::check() && app()->auth::user()->role === 'admin'): ?>
                     <li><a href="<?= app()->route->getUrl('/admin/users') ?>">Пользователи</a></li>
                 <?php endif; ?>

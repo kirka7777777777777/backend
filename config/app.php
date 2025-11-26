@@ -13,6 +13,7 @@ return [
     'unique' => \Validators\UniqueValidator::class,
           'image' => Validators\ImageValidator::class,
           'file_size' => Validators\FileSizeValidator::class,
+
 ],
     'routeAppMiddleware' => [
         'csrf' => \Middlewares\CSRFMiddleware::class,
