@@ -1,19 +1,24 @@
 {
-    "name": "kirka7777777777777/backend",
-    "type": "project",
+    "name": "kirka7777777777777/collect",
+    "description": "Module for working with arrays ",
+    "type": "library",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "<ваше имя>",
+            "email": "<ваша почта>"
+        }
+    ],
     "minimum-stability": "dev",
     "require": {
-        "php": "^7.4 | ^8.0",
-        "illuminate/database": "10.x-dev",
-        "illuminate/events": "10.x-dev",
-        "nikic/fast-route": "2.0.x-dev"
-
+        "php": "^7.4 | ^8.0"
     },
     "autoload": {
         "psr-4": {
-            "Src\\": "core/Src/",
-            "": "app/"
-        }
+            "Collect\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     }
 }
